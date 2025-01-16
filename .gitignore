@@ -1,4 +1,5 @@
 __pycache__
-__pycache__/*
+__pycache__/*.*
+__pycache__/*.pyc
 .idea
 template/Put_Applicant_001_of_001.xml

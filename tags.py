@@ -1,24 +1,25 @@
-from faker import Faker
-faker = Faker()
+from util import MockObject
 
-def get_faker_data():
+mock = MockObject()
+
+def get_mock_data():
     """
         Please modify the content of this tags and map it accordingly based on your requirements
     """
     # tags = {
-    #     'price': faker.first_name(),
-    #     'name' : faker.first_name(),
-    #     'title' : faker.first_name(),
-    #     'author' : faker.first_name(),
+    #     'price': mock.first_name(),
+    #     'name' : mock.first_name(),
+    #     'title' : mock.first_name(),
+    #     'author' : mock.first_name(),
     # }
 
     tags = {
-        'Applicant_ID': faker.first_name(),
-        'First_Name' : faker.first_name(),
-        'Last_Name' : faker.first_name(),
-        'Address_Line_Data' : faker.address(),
-        'Municipality' : faker.first_name(),
-        'Postal_Code' : faker.postalcode(),
+        'Applicant_ID': mock.application_id(),
+        'First_Name' : mock.last_name(),
+        'Last_Name' : mock.first_name(),
+        'Address_Line_Data' : mock.address(),
+        'Municipality' : mock.municipality(['Kings','Clarks','Powel','Sworn','Brown','Yale','Madison','Drake']),
+        'Postal_Code' : mock.postalcode(),
     }
     
     return tags

@@ -37,6 +37,7 @@ class Parser(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+        self.tags_present = False
         self.get_logger().info('Logger[xmlparser] instantiated')
         self.args = self.get_parser().parse_args()
         self.get_logger().info('Arguments Processed')
@@ -105,7 +106,6 @@ class Parser(object):
         if root.attributes is not None:
             for k, v in root.attributes.items():
                 value = v
-                # _tags = tags.get_faker_data()
                 if k in _tags:
                     value = _tags[k]
                 node.setAttribute(k,value)
@@ -119,6 +119,7 @@ class Parser(object):
                 if len(strippedList) == 2:
                     stripped_tag = strippedList[1]
                     if stripped_tag in _tags:
+                        self.tags_present = True
                         # value = set_specific_values(stripped_tag)
                         value = _tags[stripped_tag]
                 item = self.output.createTextNode(value)
@@ -130,10 +131,13 @@ class Parser(object):
             
     def add_nodes(self, root, node):
         for _ in range(int(self.REPEATS)):
-            _tags = tags.get_faker_data()
+            _tags = tags.get_mock_data()
             self.set_all_attributes(root, node, _tags)
-            self.get_logger().info("Modified Tags and its content :: " + json.dumps(_tags, indent=4))
             self.walk_xml(root, node, _tags)
+            if self.tags_present:
+                self.get_logger().info("Modified Tags and its content :: " + json.dumps(_tags, indent=4))
+            else:
+                self.get_logger().error("Tags Not Available for modification, please check your tags.py and template file")
 
     def get_namespace(self):
         with open(self.TEMPLATE_FILE, 'r') as f:
@@ -167,5 +171,5 @@ class Parser(object):
         node = self.output.createElementNS(root.namespaceURI, root.tagName)
         self.add_nodes(root, node)
         self.output.appendChild(node)
-
-        self.get_logger().info("Output File Path :: " + self.OUTPUT_FILE)
+        if self.tags_present:
+            self.get_logger().info("Output File Path :: " + self.OUTPUT_FILE)
