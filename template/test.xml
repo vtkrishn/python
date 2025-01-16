@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <w:root xmlns:w="urn:com.workday/bsvc" w:version="v40.0">
-<category name='Technology'>
-<book title='Learning Amazon Web Services' author='Mark Wilkins'>
+<w:category name='Technology'>
+<w:book title='Learning Amazon Web Services' author='Mark Wilkins'>
 <w:price>$20</w:price>
-</book>
-</category>
+</w:book>
+</w:category>
 </w:root>

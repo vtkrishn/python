@@ -1,0 +1,141 @@
+#! /bin/sh
+
+# docker build --build-arg WD_ARTIFACTORY_USER=${ARTIFACTORY_USER} --build-arg WD_ARTIFACTORY_API_TOKEN=${ARTIFACTORY_API_TOKEN} --progress=plain --tag docker-dev-artifactory.workday.com/vinod.krishnan/python-redis-py .
+# docker push docker-dev-artifactory.workday.com/vinod.krishnan/python-redis-py:latest
+
+SUCCESS=0
+FAIL=1
+
+error=${SUCCESS}
+
+BLUE_LABEL=34
+YELLOW_LABEL=33
+GREEN_LABEL=32
+RED_LABEL=31
+
+BLUE_BOLD=104
+YELLOW_BOLD=103
+GREEN_BOLD=102
+RED_BOLD=101
+
+curr_branch=`git branch | grep "*" | cut -f2 -d' '`
+display="current branch :: \033[0;${BLUE_LABEL}m$curr_branch \033[0m"
+
+function display_bold(){
+echo "\033[0;${2}m***** $1 ***** \033[0m"
+}
+
+function run_git_status(){
+    display_bold "Verify the following files" ${RED_LABEL}
+    git status | grep --color "modified:\|new file:"
+}
+
+function run_git_pull(){
+    echo "Pulling the latest changes to the $display\n"
+    git pull
+}
+
+function run_git_add_files(){
+    echo "Add all the changes done in the $display\n"
+    git add -A
+}
+
+function run_git_commit(){
+    if [[ ${option} = "y" || ${option} = "Y" ]]; then
+        echo "Committing the changes to $display\n"
+        display_bold " Enter commit message " ${RED_LABEL}
+        read message
+        git commit -m "$message" | grep --color "changed\|insertions(+)\|deletions(-)"
+        echo "Changes committed to $display Successfully\n"
+    else
+        error=${FAIL}
+    fi
+
+    echo "Proceed with pushing the changes (Y/N)"
+    read option
+    if [[ ${option} = "y" || ${option} = "Y" ]]; then
+        run_git_push
+    else
+        error=${FAIL}
+    fi
+}
+
+function run_git_push(){
+    echo "Pushing the changes to $display\n"
+    git push --set-upstream origin ${curr_branch}
+    echo "Changes pushed to $display Successfully\n"
+}
+
+function run_all_tests(){
+    python -m unittest
+}
+
+
+function start_program(){
+    run_init_checks
+}
+
+function run_init_checks(){
+    echo "Preparing to run the build\n"
+    if [[ ${display} = "master" ]]; then
+        display_bold " Doing changes in the master directly is not allowed " ${RED_LABEL}
+        echo "Do you want to create a branch for the changes? (Y/N)"
+        read option
+        if [[ ${option} = "y" || ${option} = "Y" ]]; then
+            echo "Enter the new branch name :: "
+            read branchName
+            git checkout -b ${branchName}
+            #git switch -c ${branchName}
+        else
+            error=${FAIL}
+            end_program
+        fi
+    fi
+}
+
+function end_program(){
+    if [[ ${error} = ${FAIL} ]]; then
+        echo "user skipped some steps"
+        display_bold "SKIPPED " ${YELLOW_LABEL}
+    else
+        echo "everything completed successfully"
+        display_bold "SUCCESS " ${GREEN_LABEL}
+    fi
+    exit ${error}
+}
+
+start_program
+
+echo "Getting the changed files for the $display\n"
+run_git_status
+
+run_git_pull
+
+echo "Confirming the changes after latest pull in the $display\n"
+run_git_status
+
+run_git_add_files
+
+echo "One last check before committing the $display\n"
+run_git_status
+
+echo "Proceed with commit (Y/N)"
+read option
+
+display_bold " Running All Unit Tests " ${BLUE_LABEL}
+run_all_tests
+
+# TODO by pass if the test is not OK , investigate below code and make it work
+#if grep -q "OK" build.log; then
+#    display_bold "All Tests Passed " ${GREEN_BOLD}
+#else
+#    display_bold "Tests Failed, Exiting " ${RED_BOLD}
+#    exit
+#fi
+
+# TODO if all test passed
+run_git_commit
+
+end_program
+
+#end

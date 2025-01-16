@@ -68,9 +68,13 @@ class Parser(object):
                 self.get_logger().info('Directory output/ does not exists in the current path')
                 self.get_logger().info('Creating the output/ directory')
                 os.mkdir('output/')
+                path = 'output/Output.xml'
+                with open(path, 'w'):
+                    os.utime(path, None)
         else:
             self.OUTPUT_FILE=self.args.output
-            if self.OUTPUT_FILE is None or len(self.OUTPUT_FILE) == 0:
+        if self.OUTPUT_FILE is None or len(self.OUTPUT_FILE) == 0:
+            if self.debug:
                 OUTPUT_NAME='Output.xml'
                 self.OUTPUT_FILE = "output/" + OUTPUT_NAME
 
@@ -97,11 +101,11 @@ class Parser(object):
         with open(self.OUTPUT_FILE, 'w') as f:
             self.output.writexml(f,encoding="utf-8") 
 
-    def set_all_attributes(self, root, node):
+    def set_all_attributes(self, root, node, _tags):
         if root.attributes is not None:
             for k, v in root.attributes.items():
                 value = v
-                _tags = tags.get_faker_data()
+                # _tags = tags.get_faker_data()
                 if k in _tags:
                     value = _tags[k]
                 node.setAttribute(k,value)
@@ -120,13 +124,14 @@ class Parser(object):
                 item = self.output.createTextNode(value)
             if child.nodeType == Node.ELEMENT_NODE:
                 item = self.output.createElementNS(child.namespaceURI, child.tagName)
-                self.set_all_attributes(child, item)
+                self.set_all_attributes(child, item, _tags)
             node.appendChild(item)
             self.walk_xml(child, item, _tags)
             
     def add_nodes(self, root, node):
         for _ in range(int(self.REPEATS)):
             _tags = tags.get_faker_data()
+            self.set_all_attributes(root, node, _tags)
             self.get_logger().info("Modified Tags and its content :: " + json.dumps(_tags, indent=4))
             self.walk_xml(root, node, _tags)
 
@@ -160,7 +165,6 @@ class Parser(object):
             exit(1)
         
         node = self.output.createElementNS(root.namespaceURI, root.tagName)
-        self.set_all_attributes(root, node)
         self.add_nodes(root, node)
         self.output.appendChild(node)
 
