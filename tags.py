@@ -7,10 +7,10 @@ def get_mock_data():
         Please modify the content of this tags and map it accordingly based on your requirements
     """
     # tags = {
-    #     'price': mock.first_name(),
-    #     'name' : mock.first_name(),
-    #     'title' : mock.first_name(),
-    #     'author' : mock.first_name(),
+    #     'price': mock.price(),
+    #     'name' : mock.name(),
+    #     'title' : mock.title(),
+    #     'author' : mock.author(),
     # }
 
     tags = {

@@ -7,6 +7,21 @@ class MockObject(Faker):
     def __init__(self):
         self.mock = Faker()
 
+    def price(self):
+        return self.get_random_nums(2) + '.' + self.get_random_nums(3)
+    
+    def name(self):
+        return self.mock.name()
+    
+    def author(self):
+        return self.name()
+    
+    def title(self):
+        words = []
+        for i in range(random.choice([3,4,5])):
+            words.append(self.get_random_small(random.choice([3,4,5])))
+        return ' '.join(words)
+    
     def first_name(self):
         return self.mock.first_name()
     
@@ -52,11 +67,26 @@ class MockObject(Faker):
         characters = [i for i in (''.join([num, small, caps, specials]))]
         return self.get_random(characters, size)
 
-m = MockObject()
-print("Random Number :: " ,m.get_random_nums())
-print("Random Small Alphabets :: " ,m.get_random_small())
-print("Random Caps Alphabets :: " ,m.get_random_caps())
-print("Random Special Characters :: " ,m.get_random_specials())
-print("Random Combination Characters :: " ,m.get_random_characters(10))
+if __name__ == '__main__':
+    m = MockObject()
+    print("Random Number :: " ,m.get_random_nums())
+    print("Random Small Alphabets :: " ,m.get_random_small())
+    print("Random Caps Alphabets :: " ,m.get_random_caps())
+    print("Random Special Characters :: " ,m.get_random_specials())
+    print("Random Combination Characters :: " ,m.get_random_characters(10))
+
+    for i in [
+        m.price(),
+        m.name(),
+        m.title(),
+        m.author(),
+        m.first_name(),
+        m.last_name(),
+        m.address(),
+        m.municipality(['Kings']),
+        m.application_id(),
+        m.postalcode(),
+    ]:
+        print(i)
 
 
