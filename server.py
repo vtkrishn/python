@@ -32,7 +32,6 @@ def set_gc_incidents_metrics():
 
     incidents = response.json()
 
-    # Set total incidents count
     gc_incidents_count.set(len(incidents))
 
     # Set incidents details
@@ -52,17 +51,17 @@ def home():
     curr = datetime.now()
     print(curr)
 
-    import random
-    process_summary_requests(random.choice([1,5,10]))
+    # import random
+    # process_summary_requests(random.choice([1,5,10]))
 
-    while True:
-        set_gc_incidents_metrics()
-        time.sleep(60)
+    # while True:
+    #     set_gc_incidents_metrics()
+    #     time.sleep(60)
 
     return str(curr)
 
 if __name__ == '__main__':
     start_http_server(8000)
-    app.run(port=5000)
+    app.run(host="0.0.0.0", port=9000)
     
     
