@@ -1,4 +1,5 @@
 Faker
-prometheus_client
 flask
+prometheus_client
 requests
+protobuf

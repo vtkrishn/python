@@ -51,12 +51,12 @@ def home():
     curr = datetime.now()
     print(curr)
 
-    # import random
-    # process_summary_requests(random.choice([1,5,10]))
+    import random
+    process_summary_requests(random.choice([1,5,10]))
 
-    # while True:
-    #     set_gc_incidents_metrics()
-    #     time.sleep(60)
+    while True:
+        set_gc_incidents_metrics()
+        time.sleep(60)
 
     return str(curr)
 
