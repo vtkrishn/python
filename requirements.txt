@@ -1,1 +1,4 @@
 Faker
+prometheus_client
+flask
+requests
